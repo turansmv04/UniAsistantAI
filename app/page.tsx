@@ -5,27 +5,17 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function GeniChat() {
-  const [budget, setBudget] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('uni_budget');
-      return saved ? parseFloat(saved) : 0;
-    }
-    return 0;
-  });
-
-  const [days, setDays] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('uni_days');
-      return saved ? parseInt(saved) : 1;
-    }
-    return 1;
-  });
-
+  const [mounted, setMounted] = useState(false);
+  const [budget, setBudget] = useState<number>(0);
+  const [days, setDays] = useState<number>(1);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    const savedB = localStorage.getItem('uni_budget');
+    const savedD = localStorage.getItem('uni_days');
+    if (savedB) setBudget(parseFloat(savedB));
+    if (savedD) setDays(parseInt(savedD) || 1);
+    setMounted(true);
   }, []);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
@@ -39,14 +29,12 @@ export default function GeniChat() {
       const dMatch = content.match(/Qalan Gün: \*\*(\d+)/i);
       
       if (bMatch) {
-        const val = parseFloat(bMatch[1]);
-        setBudget(val);
-        if (typeof window !== 'undefined') localStorage.setItem('uni_budget', val.toString());
+        setBudget(parseFloat(bMatch[1]));
+        localStorage.setItem('uni_budget', bMatch[1]);
       }
       if (dMatch) {
-        const val = parseInt(dMatch[1]);
-        setDays(val);
-        if (typeof window !== 'undefined') localStorage.setItem('uni_days', val.toString());
+        setDays(parseInt(dMatch[1]));
+        localStorage.setItem('uni_days', dMatch[1]);
       }
     }
   });
@@ -55,7 +43,7 @@ export default function GeniChat() {
     if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  if (!isClient) return <div className="bg-[#000814] h-screen" />;
+  if (!mounted) return null;
 
   return (
     <main className="flex flex-col h-screen bg-[#000814] text-white overflow-hidden">
@@ -106,13 +94,7 @@ export default function GeniChat() {
             placeholder="Mesajınızı yazın..." 
             onChange={handleInputChange} 
           />
-          <button 
-            type="submit" 
-            disabled={isLoading} 
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-blue-600 rounded-xl hover:bg-blue-500 transition-all"
-            aria-label="Mesajı göndər"
-            title="Mesajı göndər"
-          >
+          <button type="submit" disabled={isLoading} className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-blue-600 rounded-xl hover:bg-blue-500 transition-all">
             <Send size={18} />
           </button>
         </form>
