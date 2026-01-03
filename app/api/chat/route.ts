@@ -42,7 +42,7 @@ Yuxu Tövsiyəsi: **HH:MM** (⚡ Enerji: %XX)
 [Motivation Sentence - ONLY if Exam/Goal is confirmed]
 
 FIRST CONTACT:
-- Greeting: "Salam! Mən UniAssistant. Büdcəni (məs: 20 AZN, 3 gün) və ya yuxu saatını (08:00 oyanacam) yaz, planlayaq."`;
+- Greeting: "Salam! Mən UniAssistant. Büdcəni (məs: 20 AZN, 3 gün) ve ya yuxu saatını (08:00 oyanacam) yaz, planlayaq."`;
 
     const result = await model.run([
       { role: "system", content: systemPrompt },
@@ -56,7 +56,7 @@ FIRST CONTACT:
     return new Response(botReply);
 
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Xəta";
-    return new Response("Xəta: " + msg, { status: 500 });
+    const errorMsg = err instanceof Error ? err.message : "Unknown error";
+    return new Response("Xəta: " + errorMsg, { status: 500 });
   }
 }
