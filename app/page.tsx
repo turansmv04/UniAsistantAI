@@ -6,15 +6,28 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function GeniChat() {
   const [mounted, setMounted] = useState(false);
-  const [budget, setBudget] = useState<number>(0);
-  const [days, setDays] = useState<number>(1);
+  
+  // Dataları Effect-dən kənarda, birbaşa başlanğıcda oxuyuruq
+  const [budget, setBudget] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('uni_budget');
+      return saved ? parseFloat(saved) : 0;
+    }
+    return 0;
+  });
+
+  const [days, setDays] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('uni_days');
+      return saved ? parseInt(saved) : 1;
+    }
+    return 1;
+  });
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Bu useEffect artıq sadəcə mounted statusunu idarə edir
   useEffect(() => {
-    const savedB = localStorage.getItem('uni_budget');
-    const savedD = localStorage.getItem('uni_days');
-    if (savedB) setBudget(parseFloat(savedB));
-    if (savedD) setDays(parseInt(savedD) || 1);
     setMounted(true);
   }, []);
 
@@ -29,12 +42,14 @@ export default function GeniChat() {
       const dMatch = content.match(/Qalan Gün: \*\*(\d+)/i);
       
       if (bMatch) {
-        setBudget(parseFloat(bMatch[1]));
-        localStorage.setItem('uni_budget', bMatch[1]);
+        const val = parseFloat(bMatch[1]);
+        setBudget(val);
+        localStorage.setItem('uni_budget', val.toString());
       }
       if (dMatch) {
-        setDays(parseInt(dMatch[1]));
-        localStorage.setItem('uni_days', dMatch[1]);
+        const val = parseInt(dMatch[1]);
+        setDays(val);
+        localStorage.setItem('uni_days', val.toString());
       }
     }
   });
