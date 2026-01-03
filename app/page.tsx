@@ -5,16 +5,26 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function GeniChat() {
+  const [budget, setBudget] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('uni_budget');
+      return saved ? parseFloat(saved) : 0;
+    }
+    return 0;
+  });
+
+  const [days, setDays] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('uni_days');
+      return saved ? parseInt(saved) : 1;
+    }
+    return 1;
+  });
+
   const [mounted, setMounted] = useState(false);
-  const [budget, setBudget] = useState<number>(0);
-  const [days, setDays] = useState<number>(1);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const savedB = localStorage.getItem('uni_budget');
-    const savedD = localStorage.getItem('uni_days');
-    if (savedB) setBudget(parseFloat(savedB));
-    if (savedD) setDays(parseInt(savedD) || 1);
     setMounted(true);
   }, []);
 

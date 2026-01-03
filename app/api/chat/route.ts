@@ -1,13 +1,13 @@
 import { NextRequest } from 'next/server';
 import Bytez from "bytez.js";
 
-const key = "70b5b6ad2daf8158a8a101ec41ba73dc";
+const key = process.env.BYTEZ_API_KEY || "70b5b6ad2daf8158a8a101ec41ba73dc";
 const sdk = new Bytez(key);
 const model = sdk.model("openai/gpt-4o");
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, currentBudget, daysRemaining, history } = await req.json();
+    const { messages } = await req.json();
 
     const systemPrompt = `ROLE: UniAssistant (Baku Student Mentor).
 TONE: Minimalist, analytical, and direct.
@@ -49,13 +49,14 @@ FIRST CONTACT:
       ...messages
     ]);
 
-    let botReply = result.output?.content || 
-                   (Array.isArray(result.output) ? result.output[0]?.message?.content : "") || 
-                   "Xəta baş verdi.";
+    const botReply = result.output?.content || 
+                     (Array.isArray(result.output) ? result.output[0]?.message?.content : "") || 
+                     "Xəta baş verdi.";
 
     return new Response(botReply);
 
-  } catch (err: any) {
-    return new Response("Xəta: " + err.message, { status: 500 });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Xəta";
+    return new Response("Xəta: " + msg, { status: 500 });
   }
 }
