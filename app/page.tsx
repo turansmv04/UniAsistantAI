@@ -5,9 +5,6 @@ import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function GeniChat() {
-  const [mounted, setMounted] = useState(false);
-  
-  // Dataları Effect-dən kənarda, birbaşa başlanğıcda oxuyuruq
   const [budget, setBudget] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('uni_budget');
@@ -25,10 +22,10 @@ export default function GeniChat() {
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
 
-  // Bu useEffect artıq sadəcə mounted statusunu idarə edir
   useEffect(() => {
-    setMounted(true);
+    setIsClient(true);
   }, []);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
@@ -44,12 +41,12 @@ export default function GeniChat() {
       if (bMatch) {
         const val = parseFloat(bMatch[1]);
         setBudget(val);
-        localStorage.setItem('uni_budget', val.toString());
+        if (typeof window !== 'undefined') localStorage.setItem('uni_budget', val.toString());
       }
       if (dMatch) {
         const val = parseInt(dMatch[1]);
         setDays(val);
-        localStorage.setItem('uni_days', val.toString());
+        if (typeof window !== 'undefined') localStorage.setItem('uni_days', val.toString());
       }
     }
   });
@@ -58,11 +55,10 @@ export default function GeniChat() {
     if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  if (!mounted) return null;
+  if (!isClient) return <div className="bg-[#000814] h-screen" />;
 
   return (
     <main className="flex flex-col h-screen bg-[#000814] text-white overflow-hidden">
-      {/* HEADER */}
       <div className="flex flex-col items-center pt-10 pb-4 shrink-0 relative text-center border-b border-white/5">
         <div className="w-32 h-32 bg-blue-500 rounded-full blur-[60px] absolute opacity-20 animate-pulse" />
         <h1 className="text-3xl font-bold tracking-[0.2em] z-10 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">
@@ -78,7 +74,6 @@ export default function GeniChat() {
         </div>
       </div>
 
-      {/* CHAT AREA */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-[25%] py-8 space-y-6 scrollbar-hide">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full opacity-30 space-y-4">
@@ -103,7 +98,6 @@ export default function GeniChat() {
         {isLoading && <div className="ml-12 text-[10px] text-blue-400/50 animate-pulse uppercase">Düşünürəm...</div>}
       </div>
 
-      {/* INPUT */}
       <div className="p-6 md:px-[25%] bg-gradient-to-t from-[#000814] to-transparent">
         <form onSubmit={handleSubmit} className="relative group max-w-4xl mx-auto">
           <input 
