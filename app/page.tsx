@@ -1,5 +1,5 @@
 'use client';
-import { useChat, Message } from 'ai/react';
+import { useChat } from 'ai/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -11,11 +11,11 @@ export default function GeniChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
     const savedB = localStorage.getItem('uni_budget');
     const savedD = localStorage.getItem('uni_days');
     if (savedB) setBudget(parseFloat(savedB));
     if (savedD) setDays(parseInt(savedD) || 1);
+    setMounted(true);
   }, []);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
@@ -25,8 +25,7 @@ export default function GeniChat() {
       const content = await res.text();
       setMessages((prev) => [...prev, { id: Date.now().toString(), role: 'assistant', content }]);
 
-      
-     const bMatch = content.match(/Balans: \*\*(-?\d+(\.\d+)?)/i);
+      const bMatch = content.match(/Balans: \*\*(-?\d+(\.\d+)?)/i);
       const dMatch = content.match(/Qalan Gün: \*\*(\d+)/i);
       
       if (bMatch) {
@@ -69,7 +68,7 @@ export default function GeniChat() {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full opacity-30 space-y-4">
             <Sparkles size={40} className="text-blue-400" />
-            <p className="text-sm italic">"100 manat 5 gün" yazaraq başla.</p>
+            <p className="text-sm italic">{`"100 manat 5 gün" yazaraq başla.`}</p>
           </div>
         )}
         <AnimatePresence>
@@ -98,7 +97,13 @@ export default function GeniChat() {
             placeholder="Mesajınızı yazın..." 
             onChange={handleInputChange} 
           />
-          <button type="submit" disabled={isLoading} className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-blue-600 rounded-xl hover:bg-blue-500 transition-all">
+          <button 
+            type="submit" 
+            disabled={isLoading} 
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-blue-600 rounded-xl hover:bg-blue-500 transition-all"
+            aria-label="Mesajı göndər"
+            title="Mesajı göndər"
+          >
             <Send size={18} />
           </button>
         </form>

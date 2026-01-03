@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import Bytez from "bytez.js";
 
-// .env faylından açarı oxuyuruq
 const key = process.env.BYTEZ_API_KEY || "70b5b6ad2daf8158a8a101ec41ba73dc";
 const sdk = new Bytez(key);
 const model = sdk.model("openai/gpt-4o");
@@ -19,7 +18,7 @@ STRICT TOPIC ISOLATION RULES (MANDATORY):
 3. DUAL TOPIC: Yalnız hər iki mövzu eyni mesajda qeyd olunarsa, hər iki footeri alt-alta göstər.
 
 BUDGET CALCULATIONS & LOGIC:
-- İlk büdcə təyin olunduqda mütləq bu cümləni de: "Xərclərini mənimlə bölüşməyin həm büdcəni düzgün planlamağına, həm də özün üçün hər şeyin aydın olmasına kömək edəcək."
+- İlk büdcə təyin olunduqda mütləq bu cümləni de: "Xərclərini mənimlə bölüşməyin həm büdcəni düzgün planlamağına, həm də özün üçün hər şeyin aydın olmasına kömək edəcek."
 - Transit (Metro/Bus) həmişə 0.60 AZN-dir.
 - GÜNLÜK LİMİT MƏNTİQİ: Əgər istifadəçi bugünkü limit daxilindədirsə, gələcək günlərin limitini yenidən bölüb dəyişmə. Yalnız limit aşıldıqda növbəti günlərin limitini yenilə.
 - FÜRSƏT MALİYYƏTİ: Yalnız günlük limit AŞILDIQDA qeyd et: "Bu artıq xərc yerinə [X] dəfə metroya minə bilərdin." (X = Artıq məbləğ / 0.60).
@@ -48,14 +47,14 @@ FIRST CONTACT:
       ...messages
     ]);
 
-    // Bytez SDK-dan gələn cavabı təmizləyirik
-    let botReply = result.output?.content || 
-                   (Array.isArray(result.output) ? result.output[0]?.message?.content : "") || 
-                   "Xəta baş verdi.";
+    const botReply = result.output?.content || 
+                     (Array.isArray(result.output) ? result.output[0]?.message?.content : "") || 
+                     "Xəta baş verdi.";
 
     return new Response(botReply);
 
-  } catch (err: any) {
-    return new Response("Xəta: " + err.message, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : "Naməlum xəta";
+    return new Response("Xəta: " + errorMsg, { status: 500 });
   }
 }
