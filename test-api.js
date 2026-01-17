@@ -1,4 +1,3 @@
-// Əgər terminalda xəta versə, 'import' yerinə 'const Bytez = require("bytez.js").default' yoxlaya bilərsən
 import Bytez from "bytez.js"
 
 const key = "cc2ac0caf3cab39bbd2ca9d519ebeeab";
@@ -9,7 +8,6 @@ async function testBytez() {
     console.log("🚀 Bytez API vasitəsilə GPT-4o yoxlanılır...");
 
     try {
-        // Model olaraq gpt-4o seçirik
         const model = sdk.model("openai/gpt-5.2")
 
         console.log("⏳ Sorğu göndərilir, gözləyin...");

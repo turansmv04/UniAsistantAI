@@ -26,7 +26,6 @@ export default function GeniChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -93,7 +92,6 @@ export default function GeniChat() {
                   {m.role === 'user' ? (
                     m.content
                   ) : (
-                    /* Müəllimin istədiyi Markdown render strukturu */
                     <div className="prose prose-invert max-w-none prose-p:leading-relaxed prose-strong:text-blue-400 prose-hr:border-white/10 prose-hr:my-3">
                       <ReactMarkdown>
                         {m.content}
